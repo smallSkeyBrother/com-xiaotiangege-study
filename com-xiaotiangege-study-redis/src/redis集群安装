@@ -6,3 +6,13 @@ tar xzvf redis-5.0.8.tar.gz -C /usr/local/redis
 
 3. 安装
 make install PREFIX=/usr/local/redis
+
+4. 修改配置文件
+bind 10.40.10.223  -- 绑定ip
+port 7001          -- 监听端口
+daemonize yes      -- 后台运行进程
+pidfile "/var/run/redis_7001.pid"  --进程号
+cluster-enabled yes   --开启集群模式
+cluster-config-file "nodes-7001.conf"   --集群模式需要设置，redis自己维护，不需要手动操作
+--连接集群
+./redis-cli -c -h 10.40.10.222 -p 7000
