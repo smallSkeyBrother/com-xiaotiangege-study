@@ -22,6 +22,7 @@
         <module>com-xiaotiangege-study-docker+k8s</module>
         <module>com-xiaotiangege-study-elk</module>
         <module>com-xiaotiangege-study-doc</module>
+        <module>com-xiaotiangege-study-jenkins</module>
     </modules>
 
     <groupId>com.xiaotiangege.study</groupId>
