@@ -23,6 +23,11 @@
         <module>com-xiaotiangege-study-elk</module>
         <module>com-xiaotiangege-study-doc</module>
         <module>com-xiaotiangege-study-jenkins</module>
+        <module>com-xiaotiangege-study-mongodb</module>
+        <module>com-xiaotiangege-study-搜索引擎</module>
+        <module><![CDATA[com-xiaotiangege-study-tomcat&jetty]]></module>
+        <module>com-xiaotiangege-study-java</module>
+        <module>com-xiaotiangege-study-net</module>
     </modules>
 
     <groupId>com.xiaotiangege.study</groupId>
