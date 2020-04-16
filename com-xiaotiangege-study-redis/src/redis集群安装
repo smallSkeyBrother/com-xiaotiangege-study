@@ -1,3 +1,5 @@
+一，开篇-集群搭建
+
 1. 下载文件包
 wget http://download.redis.io/releases/redis-5.0.8.tar.gz
 
@@ -8,11 +10,70 @@ tar xzvf redis-5.0.8.tar.gz -C /usr/local/redis
 make install PREFIX=/usr/local/redis
 
 4. 修改配置文件
-bind 10.40.10.223  -- 绑定ip
-port 7001          -- 监听端口
-daemonize yes      -- 后台运行进程
-pidfile "/var/run/redis_7001.pid"  --进程号
-cluster-enabled yes   --开启集群模式
-cluster-config-file "nodes-7001.conf"   --集群模式需要设置，redis自己维护，不需要手动操作
---连接集群
+(1) 设置绑定ip
+bind 10.40.10.223
+(2) 设置监听端口
+port 7001
+(3) 设置进程为后台运行
+daemonize yes
+(4) 设置运行进程号保存的目录
+pidfile "/var/run/redis_7001.pid"
+(5) 设置开启集群模式
+cluster-enabled yes
+(6) 设置集群模式节点文件配置地址（该配置文件，只需要配置文件路径，文件内容有redis自动维护，不需要手动维护）
+cluster-config-file "nodes-7001.conf"
+(7) 配置持久化文件放置位置
+dir /usr/local/redis/data
+(8) 其他配置
+
+5. 依次启动所有的节点 ./redis-server /usr/local/redis/redis-cluster/redis-7000/redis.conf
+
+6. 启动集群：./redis-trib.rb create --replicas 1 10.40.10.222:7000 10.40.10.222:7001 10.40.10.222:7002
+ 10.40.10.222:7003 10.40.10.222:7004 10.40.10.222:7005
+
+7. 操作命令
+(1) 连接集群（-c表示连接集群，-h后跟机器ip，-p后跟监听端口）
 ./redis-cli -c -h 10.40.10.222 -p 7000
+
+
+二，简介
+1. redis (remote dictionary server) 检查，远程字典服务。
+2. redis 支持的键值数据类型：
+（1）字符串
+（2）散列类型<map>
+（3）列表类型<list>
+（4）集合<set>
+（5）有序集合<zset>
+3.存储
+（1）内存数据库，普通笔记本上操作，每秒可以进行十万次读写
+（2）可进行持久化
+（3）可设置键值过期时间（Time to live -- ttl）
+（4）可设置最大存储空间，超过时可以根据淘汰规则，自动淘汰不需要的kv
+
+
+三，入门
+1. 命令
+（1）字符串操作
+ set key val
+ get key
+ keys *
+ incr num      自增
+ incrby num 2  自增步长为2
+ append key " and str"   在字符串尾部添加
+ strlen key    获取字符串长度
+ mset k v  k1 v1  同时设置多个kv
+ mget k k1  同时获取多个kv的值
+
+（2）散列操作<map>
+ hset key field value
+ hget key field
+ hmset key field v field1 v1
+ hmget key field field1
+
+（3）列表操作<list>
+ lpush key value
+ rpush key value
+
+ lpop key
+ lpop key
+
