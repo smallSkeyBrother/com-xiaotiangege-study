@@ -57,12 +57,12 @@ dir /usr/local/redis/data
  set key val
  get key
  keys *
- incr num      自增
- incrby num 2  自增步长为2
- append key " and str"   在字符串尾部添加
- strlen key    获取字符串长度
- mset k v  k1 v1  同时设置多个kv
- mget k k1  同时获取多个kv的值
+ incr num                   自增
+ incrby num 2               自增步长为2
+ append key " and str"      在字符串尾部添加
+ strlen key                 获取字符串长度
+ mset k v  k1 v1            同时设置多个kv
+ mget k k1                  同时获取多个kv的值
 
 （2）散列操作<map>
  hset key field value
@@ -76,4 +76,6 @@ dir /usr/local/redis/data
 
  lpop key
  lpop key
+
+ llen key                   链表长度
 
