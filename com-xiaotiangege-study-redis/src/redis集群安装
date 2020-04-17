@@ -79,3 +79,13 @@ dir /usr/local/redis/data
 
  llen key                   链表长度
 
+
+（4）集合<set>
+ sadd k v
+ smembers k
+
+（5）有序集合<zset>
+   * 实现方式用散列集和跳表
+  zadd k score v
+  
+
