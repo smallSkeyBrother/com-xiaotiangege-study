@@ -31,7 +31,15 @@ dir /usr/local/redis/data
 6. 启动集群：./redis-trib.rb create --replicas 1 10.40.10.222:7000 10.40.10.222:7001 10.40.10.222:7002
  10.40.10.222:7003 10.40.10.222:7004 10.40.10.222:7005
 
-7. 操作命令
+    redis-trib.rb : redis提供的集群管理脚本
+    create : 创建集群的命令
+    --replicas ： 后跟数字，表示集群中每个节点副本的个数
+7. 向集群里添加节点：CLUSTER MEET 10.40.10.222 7006
+    CLUSTER MEET B-ip B-port
+    B-ip 节点ip
+    B-port 节点端口
+
+8. 操作命令
 (1) 连接集群（-c表示连接集群，-h后跟机器ip，-p后跟监听端口）
 ./redis-cli -c -h 10.40.10.222 -p 7000
 
@@ -126,7 +134,55 @@ dir /usr/local/redis/data
 如果系统宕机，会导致较多的数据丢失。
   3> 默认是没有开启的，使用配置： appendonly on 进行开启。
 
-五. 集群
+六. 集群
+（1）主从复制
+  1> 主节点配置无需改动，启动主节点
+  2> 从节点配置文件修改如下：
+     a. 配置主节点ip和端口
+        slaveof 10.40.10.222 6379
+     b. 如果主节点设置了密码,这里配置主节点密码
+        masterauth <master-password>
+     c. 其他属性配置
+  3> 依次根据配置文件启动主从节点
+  4> 登录节点查看副本信息
+     ./redis_cli -p port -h ip
+     >info replication
+（2）哨兵模式单价（sentinel）
+  1> 创建哨兵配置文件：redis_sentinel.conf, 该文件命名只能为小写字母和“_-.”组成；
+  2> 添加默认配置
+     sentinel monitor master_monitor 10.40.10.222 6380 1
+  3> 启动哨兵
+     ./redis_sentinel redis_sentinel.conf
+  4> 启动日志如下：
+[root@localhost bin]# ./redis-sentinel ../sentinel/redis_sentinel.conf
+                _._
+           _.-``__ ''-._
+      _.-``    `.  `_.  ''-._           Redis 3.2.9 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._
+ (    '      ,       .-`  | `,    )     Running in sentinel mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 26379
+ |    `-._   `._    /     _.-'    |     PID: 18441
+  `-._    `-._  `-./  _.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |           http://redis.io
+  `-._    `-._`-.__.-'_.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |
+  `-._    `-._`-.__.-'_.-'    _.-'
+      `-._    `-.__.-'    _.-'
+          `-._        _.-'
+              `-.__.-'
+
+18441:X 20 Apr 16:06:07.908 # Sentinel ID is f8d90b0878d148723cceca38b914a7c3e613aa7d
+18441:X 20 Apr 16:06:07.908 # +monitor master master_monitor 10.40.10.222 6379 quorum 1
+18441:X 20 Apr 16:06:07.908 * +slave slave 10.40.10.222:6380 10.40.10.222 6380 @ master_monitor 10.40.10.222 6379
+18441:X 20 Apr 16:06:07.909 * +slave slave 10.40.10.222:6381 10.40.10.222 6381 @ master_monitor 10.40.10.222 6379
+
+  5> 后续节点异常，Master宕机，会自动从slave节点选举一个节点作为master, 并会自动维护哨兵配置文件：redis_sentinel.conf
+  6> 一个哨兵能监听多个Master
+  7> 哨兵选举领头哨兵使用Raft算法
+  8> 可以为每一个节点创建哨兵监听
+
 
 
 
