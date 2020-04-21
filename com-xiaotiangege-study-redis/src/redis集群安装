@@ -34,6 +34,7 @@ dir /usr/local/redis/data
     redis-trib.rb : redis提供的集群管理脚本
     create : 创建集群的命令
     --replicas ： 后跟数字，表示集群中每个节点副本的个数
+
 7. 向集群里添加节点：CLUSTER MEET 10.40.10.222 7006
     CLUSTER MEET B-ip B-port
     B-ip 节点ip
@@ -182,6 +183,8 @@ dir /usr/local/redis/data
   6> 一个哨兵能监听多个Master
   7> 哨兵选举领头哨兵使用Raft算法
   8> 可以为每一个节点创建哨兵监听
+  9> 哨兵只需要配置监控的节点ip和端口，创建链接后，使用info命令获取集群信息，以及其他哨兵信息；然后和其他节点和哨兵
+  之间建立tcp长链接；后续进行间隔时间的发消息，确认redis节点和哨兵的活跃状态。
 
 
 
