@@ -1,0 +1,23 @@
+mybatis工作机制简介
+1. 服务启动，加载总配置文件
+2. 解析数据库配置，别名配置，缓存配置，其他全局配置
+3. 解析具体的mapper配置项
+4. 依次加载mapper配置文件，并解析Mapper
+5. 将mapper中的每一个sql操作，解析成一个对应的MapperdStatement对象，存放在Configuration内部
+6. 每次调用sqlSession.getMapper(xxxMapper.class)获取Mapper对象时，会使用Jdk的动态代理，为其生成一个MapperProxy的
+代理对象；
+
+7. 使用Proxy对象调用对应的方法
+8. 执行方法的时候：
+    ① 判断是否非用户定义的方法，如果是则跳过代理动作，直接执行；
+    ② 如果是用户定义的SQL操作方法，则使用接口
+名. + 方法名（mapper文件的命名空间+sql语句的id）, 在configuration内部的mapperdStatements(Map结构中get到)内找到对应的
+MapperdStatement对象；
+    ③ 构建 SQLCommand, MethodSignature - > 组成MapperMethod内部属性， 加入MethodCache中
+9. MapperMethod.execute(sqlSession, args);
+10. 构建StatementHandler(如果存在Plugin插件，则使用插件对其进行再次包装)
+11. 构建Statement对象
+12. 使用JDBC原生Api执行sql查询
+
+13. 结合springBoot扫描Mapper所在的包，并生成接口的代理对象；
+14. 自动注入代理类；
